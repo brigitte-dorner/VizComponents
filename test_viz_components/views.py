@@ -1,0 +1,173 @@
+from django.shortcuts import render
+from viz_components.progress import *
+from viz_components.bar_chart import BarChart
+from viz_components.doughnut_chart import DoughnutChart
+from viz_components.stacked_doughnut_chart import StackedDoughnutChart
+from viz_components.arrow import Arrow
+from itertools import chain
+
+
+# progress bar test cases
+
+def risks():
+    return ProgressBar(value=230,
+                       goal=400,
+                       title_template='{self.value}/{self.goal} mitigated',
+                       summary_template='{self.value} of {self.goal} risks mitigated',
+                       css_class='viz-component-bg-blue', )
+
+
+def heli_progress():
+    return ProgressBar(value=320,
+                       goal=500,
+                       title_template='{self.value} of {self.goal} heli patrols',
+                       summary_template='{self.value}/{self.goal} heli',
+                       css_class='bg-success', )
+
+
+def ground_progress():
+    return ProgressBar(value=52,
+                       goal=300,
+                       title_template='{self.value} of {self.goal} ground patrols',
+                       summary_template='{self.value}/{self.goal} ground',
+                       css_class='bg-warning', )
+
+
+def patrol_progress():
+    return Progress(heli_progress(),
+                    ground_progress(),
+                    summary_template='{self.value}/{self.goal} total patrols completed', )
+
+
+def planned():
+    return ProgressBar(value=59,
+                       title_template='{self.value} of {self.goal} in planning stage',
+                       css_class='viz-component-bg-red', )
+
+
+def scheduled():
+    return ProgressBar(value=159,
+                       title_template='{self.value} of {self.goal} scheduled',
+                       css_class='viz-component-bg-yellow', )
+
+
+def in_progress():
+    return ProgressBar(value=80,
+                       title_template='{self.value} of {self.goal} in progress',
+                       css_class='viz-component-bg-blue', )
+
+
+def completed():
+    return ProgressBar(value=22,
+                       title_template='{self.value} of {self.goal} completed',
+                       summary_template='{self.value} of {self.goal} completed',
+                       css_class='viz-component-bg-green', )
+
+
+def proj_progress():
+    return Progress(planned(), scheduled(), in_progress(), completed(),
+                    goal=59 + 159 + 80 + 22,
+                    summary_template='')
+
+
+progress_bar_examples = dict(
+    risks_progress=risks(),
+    completed=completed(),
+    patrol_progress=patrol_progress(),
+    proj_progress=proj_progress())
+
+
+def progress_view(request):
+    return render(request, 'test_progress.html', progress_bar_examples)
+
+
+# doughnut chart test cases
+
+doughnut_data_1 = DoughnutChart(chart_label='Sites',
+                                data_labels=['corrective', 'ROW', 'ET'],
+                                data_values=[50, 200, 170],
+                                # colors = ['red', 'green', 'blue'],
+                                center_text=['420',
+                                             {'text': 'Sites', 'color': 'red'},
+                                             'Total'])
+
+doughnut_data_2 = DoughnutChart(chart_label='Treatment Type',
+                                data_labels=['corrective', 'ROW', 'ET'],
+                                data_values=[50, 200, 170],
+                                responsive=True,
+                                # colors = ['red', 'green', 'blue'],
+                                )
+
+doughnut_chart_examples = dict(doughnut_data_1=doughnut_data_1, doughnut_data_2=doughnut_data_2,)
+
+
+def doughnut_view(request):
+    return render(request, 'test_doughnut.html', doughnut_chart_examples)
+
+
+# stacked doughnut chart test cases
+
+sdoughnut_data_1 = StackedDoughnutChart(chart_label='Sites',
+                                        data_labels=['MSR', 'non-MSR'],
+                                        data_values={'ROW': [200, 120], 'ET': [500, 300]},
+                                        colors=['#cc0000', '#ffc400'],
+                                        summary_colors=['#99ccff', '#339966'],
+                                        center_text=[{'text': '420', 'color': 'black',
+                                                      'font': {'size': 20, 'weight': 'bold', }},
+                                                     {'text': 'Sites', 'color': 'black'},
+                                                     {'text': 'Total', 'color': 'black'}])
+
+sdoughnut_chart_examples = dict(sdoughnut_data_1=sdoughnut_data_1)
+
+
+def stacked_doughnut_view(request):
+    return render(request, 'test_stacked_doughnut.html', sdoughnut_chart_examples)
+
+
+# bar chart test cases
+
+bar_data = BarChart(y_labels=['Area', 'Trees', '$$'],
+                    y_label_images={'Area': 'area.png', 'Trees': 'tree.png', '$$': 'dollar.png', },
+                    data=[{'label': 'last year',
+                           'backgroundColor': 'grey',
+                           'data': [100, 90, 140], },
+                          {'label': 'current',
+                           'backgroundColor': 'rgb(180, 10, 50)',
+                           'data': [80, 40, 50], }, ],
+                    bar_labels={'last year': {'labels': ['1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'],
+                                              'color': 'white'},
+                                'current': {'labels': ['920ha', '80', '$1,220,650'],
+                                            'color': 'white'}, })
+
+bar_chart_examples = dict(bar_data=bar_data)
+
+
+def bar_view(request):
+    return render(request, 'test_barchart.html', bar_chart_examples)
+
+
+#  arrow test cases
+
+vals = [0, 1, -1, 5, -5, 10, 10, -10, 100, -100, 1000, -1000]
+arrowds_center = dict(row1=[Arrow(val=vals[i]) for i in range(0, 6)],
+                      row2=[Arrow(val=vals[i]) for i in range(6, 12)], )
+arrowds_optimal = dict(row1=[Arrow(val=vals[i], align='optimal', min_font_size=10) for i in range(0, 6)],
+                       row2=[Arrow(val=vals[i]) for i in range(6, 12)], )
+
+arrow_examples = dict(center=arrowds_center, optimal=arrowds_optimal)
+
+def arrow_view(request):
+    return render(request, 'test_arrow.html', arrow_examples, )
+
+
+#  all widgets
+
+all_examples = dict(chain(progress_bar_examples.items(),
+                          bar_chart_examples.items(),
+                          doughnut_chart_examples.items(),
+                          sdoughnut_chart_examples.items(),
+                          arrow_examples.items(), ), )
+
+
+def test_all_view(request):
+    return render(request, 'test_all.html', all_examples)

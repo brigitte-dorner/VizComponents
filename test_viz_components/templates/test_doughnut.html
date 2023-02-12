@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load viz_component_tags %}
+{% block title %} Doughnut Chart {% endblock title %}
+
+{% block content %}
+  <div style="width:300px; padding: 50px;">
+    {% doughnut_chart doughnut_data_1.canvas_id doughnut_data_1.chartdata doughnut_data_1.chartopts %}
+  </div>
+{% endblock content %}

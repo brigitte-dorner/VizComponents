@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load viz_component_tags %}
+{% block title %} All Viz Components {% endblock title %}
+{% block content %}
+<div>
+
+</div>
+<div style="margin-left: 20px;">
+    <div>
+        <h3>Progress Bars</h3>
+        <div style="padding-left: 30px;">
+            <div style="padding-top: 20px; padding-bottom: 20px;">
+                <h5>Simple progress bar (via simple_progress_bar template)</h5>
+                <div style="width: 500px; padding: 10px;">{% simple_progress_bar risks_progress %}</div>
+            </div>
+            <div style="padding-top: 20px; padding-bottom: 20px;">
+                <h5>Simple progress bar (via progress_bar template)</h5>
+                <div style="width: 500px; padding: 10px;">{% progress_bar completed goal=200 summary_template='' %}
+                </div>
+            </div>
+            <div style="padding-top: 20px; padding-bottom: 20px;">
+                <h5>Stacked progress bar, multiple categories with separate goals</h5>
+                <div style="width: 300px; padding: 10px;">{% progress_bar patrol_progress %}</div>
+            </div>
+            <div style="padding-top: 20px; padding-bottom: 20px;">
+                <h5>Stacked progress bar, multiple categories contributing to single goal</h5>
+                <div style="width: 300px; padding: 10px;">{% progress_bar proj_progress %}</div>
+            </div>
+        </div>
+        <hr>
+    </div>
+
+    <div>
+        <h3>Arrows</h3>
+        <div style="padding: 10px;">
+            <h5>aligned with center baseline for dashboard overview</h5>
+            <div class="container" style="padding-top: 30px; padding-bottom: 50px;">
+                <div class="row">
+                    {% for ds in center.row1 %}
+                    <div class="col-2 viz-component-arrow-box-center"> {% arrow ds.canvas_id ds.arrow_data %}</div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    {% for ds in center.row2 %}
+                    <div class="col-2 viz-component-arrow-box-center"> {% arrow ds.canvas_id ds.arrow_data %}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <h5>aligned for optimum fit into canvas for use in tables</h5>
+            <div class="container" style="padding-top: 10px; padding-bottom: 50px; width:500px;">
+                <div class="row" style="height: 80px;">
+                    {% for ds in optimal.row1 %}
+                    <div class="col-2 viz-component-arrow-box-optimal"> {% arrow ds.canvas_id ds.arrow_data %}</div>
+                    {% endfor %}
+                </div>
+                <div class="row" style="height: 80px;">
+                    {% for ds in optimal.row2 %}
+                    <div class="col-2 viz-component-arrow-box-optimal"> {% arrow ds.canvas_id ds.arrow_data %}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+
+    <div>
+        <h3>Bar Chart</h3>
+        <div style="width: 600px; height: 400px; padding-left: 20px; padding-top: 30px; padding-bottom: 50px;">
+            {% bar_chart bar_data.canvas_id bar_data.chartdata bar_data.chartopts %}
+        </div>
+    </div>
+    <hr>
+
+    <h3>Doughnut Chart</h3>
+    <div class="container" style="padding-top: 30px; padding-bottom: 50px;">
+        <div class="row">
+            <div class="col-3" style="text-align: center">with center text (not responsive)</div>
+            <div class="col-3" style="text-align: center">responsive (sort of)</div>
+            <div class="col-3" style="text-align: center">stacked with center text</div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                {% doughnut_chart doughnut_data_1.canvas_id doughnut_data_1.chartdata doughnut_data_1.chartopts %}
+            </div>
+            <div class="col-3">
+                {% doughnut_chart doughnut_data_2.canvas_id doughnut_data_2.chartdata doughnut_data_2.chartopts %}
+            </div>
+            <div class="col-3">
+                {% stacked_doughnut_chart sdoughnut_data_1.canvas_id sdoughnut_data_1.chartdata sdoughnut_data_1.chartopts %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

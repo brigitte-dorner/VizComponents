@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load viz_component_tags %}
+{% block title %} Stacked Doughnut Chart {% endblock title %}
+
+{% block content %}
+  <div style="width:300px; padding: 50px;">
+    {% stacked_doughnut_chart sdoughnut_data_1.canvas_id sdoughnut_data_1.chartdata sdoughnut_data_1.chartopts %}
+  </div>
+{% endblock content %}

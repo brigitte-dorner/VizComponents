@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load viz_component_tags %}
+{% block title %} Arrows {% endblock title %}
+
+{% block content %}
+
+<div style="padding: 10px;">
+    <h5>aligned with center baseline for dashboard overview</h5>
+    <div class="container" style="padding-top: 30px; padding-bottom: 50px;">
+        <div class="row">
+            {% for ds in center.row1 %}
+            <div class="col-2 viz-component-arrow-box-center"> {% arrow ds.canvas_id ds.arrow_data %}</div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            {% for ds in center.row2 %}
+            <div class="col-2 viz-component-arrow-box-center"> {% arrow ds.canvas_id ds.arrow_data %}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <h5>aligned for optimum fit into canvas for use in tables</h5>
+    <div class="container" style="padding-top: 10px; padding-bottom: 50px; width:500px;">
+        <div class="row" style="height: 80px;">
+            {% for ds in optimal.row1 %}
+            <div class="col-2 viz-component-arrow-box-optimal"> {% arrow ds.canvas_id ds.arrow_data %}</div>
+            {% endfor %}
+        </div>
+        <div class="row" style="height: 80px;">
+            {% for ds in optimal.row2 %}
+            <div class="col-2 viz-component-arrow-box-optimal"> {% arrow ds.canvas_id ds.arrow_data %}</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

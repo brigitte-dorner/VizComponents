@@ -1,0 +1,56 @@
+{% comment %}
+<!--
+This template adds a Chart.js doughnut chart with optional text in the centre
+
+Usage: {% doughnut_chart canvas_id chartdata chartopts %} where
+canvas_id: the id of the canvas the chart will be created in
+chartdata: a json datastructure that contains the data for the chart
+           see Chart.js documentation for how this should be structured
+chartopts: a json datastructure that contains options for further customization of the chart
+           see Chart.js documentation for what options are available
+           data to parameterize the doughnutlabel plugin should be added to
+           chartopts inside the plugins section
+           see https://github.com/FreedomRings/chartjs-plugin-doughnutlabel-v3
+           for documentation for how to use this plugin
+
+           Sample code for generating python chartdata using the doughnutlabel plugin:
+
+           from json import dumps
+           chartdata = dumps({
+              'labels': ['high', 'low'],
+              'datasets': [{'label': 'Risk', 'data': [10, 20,], 'backgroundColor': ['red', 'green',]}],})
+           chartopts = dumps({
+              'plugins': {
+                 'doughnutlabel': {
+                    'labels': [
+                       {'text': '30 Sites', 'font': {'size': '60'} },
+                       {'text': 'Total', 'font': {'size': '60'} },]} }})
+
+Dependencies: Chart.js, doughnutlabel plugin (use canned version in static/js/chartjs-plugin-doughnutlabel.min.js)
+-->
+{% endcomment %}
+
+<!-- doughnut charts can be styled using the appropriate container and/or canvas classes defined below -->
+<div class="viz-component-container viz-component-doughnut-chart-container">
+  <canvas class="viz-component-canvas viz-component-doughnut-chart-canvas" id={{canvas}}></canvas>
+</div>
+
+<script>
+  /**
+   * Draw the doughnut chart
+   */
+    document.addEventListener("DOMContentLoaded", () =>  {
+      const chartdata = JSON.parse("{{chartdata|escapejs}}");
+      let chartopts = JSON.parse("{{chartopts|escapejs}}");
+      // add callbacks for custom tooltip formats here
+      chartopts.plugins['tooltip'] = {
+        callbacks: {
+          title: function (context) { return context[0].label; },
+          label: function (context) {
+            let total = 0;
+            context.dataset.data.map(e => total += e);
+            return ' ' + context.parsed + ' (' + Math.round(100 * context.parsed / total) + '%)';}, }};
+      const ctx = document.getElementById('{{canvas}}');
+      const chart = new Chart(ctx, { type: 'doughnut', data: chartdata, options: chartopts });
+    });
+</script>

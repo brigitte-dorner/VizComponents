@@ -1,0 +1,23 @@
+{% comment %}
+<!--
+Progress Bar using Bootstrap 3 progress element
+
+Usage: {% progress_bar progress additional_args %} where
+progress: an object of class Progress, or one or more objects of class ProgressBar
+additional_args: optional additional named arguments (see progress.py for details)
+
+Dependencies: bootstrap 3
+-->
+{% endcomment %}
+
+<div class="progress">
+  {% for bar in progress %}
+    <div class="progress-bar {{ bar.css_class }}" style="width:{{ bar.p_width }}%;" title="{{ bar.title }}">
+      <span class="sr-only">{{ bar.sr_label }}</span>
+      <span>{{ bar.label }}</span>
+    </div>
+  {% endfor %}
+</div>
+{% if  progress.show_summary %}
+  <div class="progress-summary">{{ progress.summary }}</div>
+{% endif %}

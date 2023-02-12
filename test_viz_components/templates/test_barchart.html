@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% load viz_component_tags %}
+{% block title %} Bar Chart {% endblock title %}
+
+{% block content %}
+  {% bar_chart bar_data.canvas_id bar_data.chartdata bar_data.chartopts %}
+{% endblock content %}

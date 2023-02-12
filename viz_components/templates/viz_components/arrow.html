@@ -1,0 +1,242 @@
+{% comment %}
+<!--
+This template adds an up-down arrow intended for visualizing change in a metric.
+
+Usage: {% arrow canvas_id data %} where
+canvas_id: the id of the canvas the arrow will be drawn in
+data: a json datastructure that contains the data for parameterizing the arrow, which would typically have been
+      created using the Arrow data class defined in arrow.py
+
+Dependencies: none (implemented using html canvas)
+-->
+{% endcomment %}
+
+{% load static %}
+
+<!-- up-down arrows can be styled using the appropriate container and/or canvas classes defined below.
+Note that the canvas should be styled to be at least as tall as it is wide, and ideally somewhat taller than it is
+wide if base_align is set to 'center'.
+-->
+<div class="viz-component-container viz-component-arrow-container">
+    <canvas class="viz-component-canvas viz-component-arrow-canvas" id={{canvas}}></canvas>
+    <div id="{{canvas}}tooltip" class="viz-component-arrow-tooltip">
+        <span id="{{canvas}}tooltiptext" class="viz-component-arrow-tooltiptext">''</span>
+    </div>
+</div>
+
+<script>
+
+    /**
+     * {% comment %}
+     * get text dimensions for the given text string in pixels
+     * @param ctx canvas context
+     * @param {string} text the text to get the bounding box for
+     * @param {number} fontSz
+     * @param {string} font
+     * @returns {{width: number, height: number}}
+     * {% endcomment %}
+     */
+    function getTextBbox(ctx, text, fontSz, font) {
+        const oldFont = ctx.font;
+        ctx.font = fontSz + 'px ' + font;
+        const textMetrics = ctx.measureText(text);
+        ctx.font = oldFont;
+        const tWidth = textMetrics.width + 2;
+        const tHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 2;
+        return {width: tWidth, height: tHeight};
+    }
+
+    /**
+     * {% comment %}
+     * get mouse position in canvas coordinates
+     * see https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
+     * @param canvas the canvas
+     * @param e mouse event
+     * @returns {{x: number, y: number}}
+     * {% endcomment %}
+     */
+    function getMousePos(canvas, e) {
+        const rect = canvas.getBoundingClientRect(), // abs. size of element
+            scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for x
+            scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for y
+        return {
+            x: (e.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
+            y: (e.clientY - rect.top) * scaleY     // been adjusted to be relative to element
+        }
+    }
+
+    // not used currently: leaving here for reference
+    /**
+     * {% comment %}
+     * Get the height and width of a box that will fill the container of the given size,
+     * while maintaining the desired target aspect ratio
+     * adapted from https://medium.com/@doomgoober/understanding-html-canvas-scaling-and-sizing-c04925d9a830
+     * who borrowed from: https://www.npmjs.com/package/intrinsic-scale
+     * @param {number} containerWidth width of the enclosing container
+     * @param {number} containerHeight height of the enclosing container
+     * @param targetAspectRatio the desired aspect ratio
+     * @returns {{width: *, height: *}}
+     * {% endcomment %}
+     */
+    function getObjectFitSize(containerWidth, containerHeight, targetAspectRatio) {
+        const containerAspectRatio = containerWidth / containerHeight;
+        let targetWidth, targetHeight;
+        if (targetAspectRatio > containerAspectRatio) {
+            targetWidth = containerWidth;
+            targetHeight = targetWidth / targetAspectRatio;
+        } else {
+            targetHeight = containerHeight;
+            targetWidth = targetHeight * targetAspectRatio;
+        }
+        return {width: targetWidth, height: targetHeight}
+    }
+
+    /**
+     * Draw a triangle that visualizes directional change.
+     */
+    document.addEventListener("DOMContentLoaded", () => {
+            let parms = JSON.parse("{{arrow_data|escapejs}}"); // arrow_data would typically come from the Arrow dataclass
+
+            /*** the canvas ***/
+            const canvas = document.getElementById('{{canvas}}'); // id of the canvas to draw on
+            // adjust canvas to match dims of surrounding container
+            canvas.style.width='100%';
+            canvas.style.height='100%';
+            // ratio of canvas pixels to screen pixels; in theory, 1 should work fine, but seems blurry if canvas
+            // isn't at least double
+            const canvasRes = 2;
+            // the internal size of the canvas: set to match screen pixels, but allow for oversampling for better pic
+            canvas.width  = canvasRes * canvas.offsetWidth;
+            canvas.height = canvasRes * canvas.offsetHeight;
+            const ctx = canvas.getContext("2d");
+
+            /*** the triangle object ***/
+            /* asymptotical max height of the triangle in canvas pixels; assume that when base_align is center,
+             the triangle at full size should fill either the top or the bottom half of the canvas,
+             depending on which way it is pointing, whereas with base_align set to 'optimal',
+             the triangle should be aligned so the drawing is centered inside the canvas  */
+            const maxHt = parms.base_align === 'center' ? canvas.height / 2 : canvas.height;
+            const s = Math.min(canvas.width / parms.max_width, maxHt / parms.max_ht);
+            const t = {
+                maxHt: maxHt,
+                width: s * parms.width,
+                height: s * parms.height,
+                colors: parms.colors,
+                dir: parms.dir,
+                boxFitsInside(box) { // check whether the given box fits inside the triangle
+                    const tanTheta = this.height / (this.width / 2); // get angle between base and side of triangle
+                    // the smaller triangle created by jamming a box of the given height in the left corner of the triangle
+                    // shares the same corner, and hence the same angle; use this to calc length of triangle base
+                    // outside the box, then use this length to calc the maximum width of the box of the given height
+                    // that will fit inside the triangle
+                    const dWidth = box.height / tanTheta;  // length of the part of the triangle base that's outside box
+                    const maxBboxWidth = this.width - (2 * dWidth); // maximum width box that will fit inside triangle
+                    return box.width <= maxBboxWidth },
+                draw(ctx = ctx) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(this.width, 0); // base of triangle is always the same
+                    if (this.height === 0) {  // no change: just draw as a flat line
+                        ctx.strokeStyle = this.colors.no_change;
+                        ctx.stroke();
+                    } else if (this.dir === 'up') {   // draw a filled triangle pointing up
+                        ctx.lineTo(this.width / 2, -this.height); // y coordinates on canvas go top to bottom
+                        ctx.fillStyle = this.colors.up;
+                        ctx.fill()
+                    } else { // draw a filled triangle pointing down
+                        ctx.lineTo(this.width / 2, this.height); // y coordinates on canvas go top to bottom
+                        ctx.fillStyle = this.colors.down;
+                        ctx.fill();
+                    }
+                },
+             };
+
+            /*** the triangle label object ***/
+            let l = {
+                text: parms.label.text,
+                font: parms.label.font,
+                minFontSz: Math.round(canvasRes * parms.label.min_font_size), // adjust font size for oversampling
+                padding: Math.round(canvasRes * parms.label.padding), // adjust padding for oversampling
+                offset: { // label offsets, for inside and outside of triangle respectively
+                    inside: Math.round(parms.label.offset.inside * t.height),
+                    outside: Math.round(parms.label.offset.outside * canvas.height) },
+                getBBox(ctx, fontSz = 0) { // bounding box, at or given font_sz or this.font_sz
+                    return getTextBbox(ctx, this.text, fontSz = fontSz > 0 ? fontSz : this.fontSz, this.font); },
+                // bounding box with y-offset and horizontal padding included
+                getPaddedBBox(ctx, fontSz = 0) {
+                    const bbox = l.getBBox(ctx, fontSz);
+                    return {width: bbox.width + this.padding, height: bbox.height + this.offset.inside}; },
+                // the maximum font size at which the label will fit inside the triangle t
+                getMaxFitFontSz(ctx, t = t) {
+                    if (!t.boxFitsInside(this.getPaddedBBox(ctx, this.minFontSz))) return 0;
+                    let fontSz = 6;
+                    while (t.boxFitsInside(this.getPaddedBBox(ctx, fontSz))) fontSz = fontSz + 1;
+                    return fontSz - 1; },
+                draw(ctx, tDir = t.dir) { // draw label on canvas
+                    ctx.font = this.fontSz + 'px ' + this.font;
+                    ctx.fillStyle = this.color;
+                    ctx.textAlign = 'center'; // horizontal text align
+                    if (tDir === 'down') {
+                        ctx.textBaseline = 'top';
+                        ctx.fillText(this.text, this.x, this.y); // y coordinates on canvas run top to bottom
+                    } else {
+                        ctx.textBaseline = 'bottom';
+                        ctx.fillText(this.text, this.x, -this.y); // y coordinates on canvas run top to bottom
+                    }
+                },
+            };
+            // the maximum font size at which the label will fit inside the triangle
+            const maxFontSz = l.getMaxFitFontSz(ctx, t);
+            l.isOutside = maxFontSz < l.minFontSz; // put label outside triangle if it doesn't fit
+            l.fontSz = l.isOutside? l.minFontSz : maxFontSz;
+            l.color = l.isOutside? parms.label.colors.outside : parms.label.colors.inside;
+            // the label y position: ideally hovering above the triangle base at the given percentage of t.height,
+            // but if it doesn't fit into the triangle, put it above (or below) the peak instead.
+            l.y = l.isOutside? t.height + l.offset.outside : l.offset.inside;
+            l.x = t.width / 2;
+
+            /*** create the drawing ***/
+            // total height of the drawing, including space needed for the label
+            const drawingHt = t.height + l.isOutside? l.offset.outside + l.getBBox(ctx).height : 0;
+             // offset for drawing in x direction: distribute white space evenly around the triangle
+            const xoffset = (canvas.width - t.width) / 2;
+            // offset for drawing in y direction:
+            // base_align == 'center': triangle base should be centered on the canvas
+            // base_align == 'optimal': drawing should be centered on the canvas (optimal use of space)
+            const yoffset = parms.base_align === 'center'? 0 : (t.dir === 'up'? drawingHt/2 : - drawingHt/2);
+            ctx.translate(xoffset, canvas.height/2 + yoffset);
+            t.draw(ctx); // draw triangle
+            l.draw(ctx); // draw label
+
+             /*** add tooltip logic ***/
+            const ymax = parms.dir === 'up'? canvas.height/2 + yoffset : canvas.height/2 + yoffset + drawingHt;
+            const drawingBbox = {
+                xmin: xoffset,
+                xmax: xoffset + t.width,
+                ymin: ymax - drawingHt,
+                ymax: ymax,
+                contains: function(p) {
+                    return this.xmax >= p.x && p.x >= this.xmin && this.ymax >= p.y && p.y >= this.ymin;
+                }
+            };
+            // set the tooltip content
+            document.getElementById("{{canvas}}tooltiptext").textContent = parms.tooltip;
+
+            // Listen for mouse moves - show css tooltip while mouse over drawing
+            canvas.addEventListener('mousemove', function (e) {
+                // mouse position in canvas coordinates
+                const mousePos = getMousePos(canvas, e);
+                if (drawingBbox.contains(mousePos)) {
+                    let ttip = document.getElementById("{{canvas}}tooltip");
+                    ttip.style.top = (mousePos.y/canvasRes - ttip.offsetHeight) + 'px'; // move tip above cursor
+                    ttip.style.left = mousePos.x/canvasRes + 'px';
+                    document.getElementById("{{canvas}}tooltiptext").style.visibility = 'visible';
+                } else {
+                    const tooltips = document.getElementsByClassName("viz-component-arrow-tooltiptext");
+                    for (let i = 0; i < tooltips.length; i++) {
+                        tooltips[i].style.visibility = "hidden";
+                    }
+                }
+            });
+         });
+</script>

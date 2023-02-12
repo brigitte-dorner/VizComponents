@@ -1,0 +1,20 @@
+{% comment %}
+<!--
+Progress Bar, simplified version for situations where only a single progress bar is required
+
+Usage: {% progress_bar progress%} where
+progress: an object of class ProgressBar
+
+Dependencies: bootstrap 3
+-->
+{% endcomment %}
+
+<div class="progress">
+    <div class="progress-bar {{ pg_bar.css_class }}" style="width:{{ pg_bar.p_width }}%;" title="{{ pg_bar.title }}">
+      <span class="sr-only">{{ pg_bar.sr_label }}</span>
+      <span>{{ pg_bar.label }}</span>
+    </div>
+</div>
+{% if  pg_bar.show_summary %}
+  <div class="progress-summary">{{ pg_bar.summary }}</div>
+{% endif %}

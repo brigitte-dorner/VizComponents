@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load viz_component_tags %}
+{% block title %} Progress Bars {% endblock title %}
+
+{% block content %}
+<div>
+  <h4>Sample progress bars</h4>
+  <div style="padding-left: 30px;">
+    <div style="padding-top: 20px; padding-bottom: 20px;">
+      <h5>Simple progress bar (via simple_progress_bar template)</h5>
+      <div style="width: 500px; padding: 10px;">{% simple_progress_bar risks_progress %}</div>
+    </div>
+    <div style="padding-top: 20px; padding-bottom: 20px;">
+      <h5>Simple progress bar (via progress_bar template)</h5>
+      <div style="width: 500px; padding: 10px;">{% progress_bar completed goal=200 summary_template='' %}</div>
+    </div>
+    <div style="padding-top: 20px; padding-bottom: 20px;">
+      <h5>Stacked progress bar, multiple categories with separate goals</h5>
+      <div style="width: 300px; padding: 10px;">{% progress_bar patrol_progress %}</div>
+    </div>
+    <div style="padding-top: 20px; padding-bottom: 20px;">
+      <h5>Stacked progress bar, multiple categories contributing to single goal</h5>
+      <div style="width: 300px; padding: 10px;">{% progress_bar proj_progress %}</div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+
+
+
+
