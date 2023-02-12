@@ -26,6 +26,19 @@
                 <h5>Stacked progress bar, multiple categories contributing to single goal</h5>
                 <div style="width: 300px; padding: 10px;">{% progress_bar proj_progress %}</div>
             </div>
+            <div style="padding-top: 20px; padding-bottom: 20px;">
+                <h5>Simple progress bar, over 100 percent complete</h5>
+                <div style="width: 300px; padding: 10px;">{% simple_progress_bar simple_overflow %}</div>
+            </div>
+            <div style="padding-top: 20px; padding-bottom: 20px;">
+                <h5>Stacked progress bar, multiple categories with separate goals, over 100 percent complete</h5>
+                <div style="width: 300px; padding: 10px;">{% progress_bar overflow_case1 %}</div>
+            </div>
+            <div style="padding-top: 20px; padding-bottom: 20px;">
+                <h5>Stacked progress bar, multiple categories contributing to single goal, over 100 percent
+                    complete</h5>
+                <div style="width: 300px; padding: 10px;">{% progress_bar overflow_case2 %}</div>
+            </div>
         </div>
         <hr>
     </div>

@@ -70,7 +70,9 @@ class ProgressBar:
 
     @property
     def p_width(self):
-        return self.bar_scaling * self.percent_complete()
+        # hold bar size constant once goal is exceeded
+        return self.bar_scaling * (100 if self.goal > 0 and self.value > self.goal else self.percent_complete())
+        #return self.bar_scaling * self.percent_complete()
 
 
 class Progress(list):
@@ -100,10 +102,12 @@ class Progress(list):
         self.goal = goal or sum(bar.goal for bar in bars)
         self.value = sum(bar.value for bar in bars)
         # scale max bar width if total value exceeds the goal
-        scalar = self.goal / self.value if self.goal > 0 and self.value > self.goal else 1
+        #scalar = self.goal / self.value if self.goal > 0 and self.value > self.goal else 1
         for b in bars:
             b.goal = b.goal if b.goal else self.goal # set goal from total if not supplied
-            b.scalar = scalar * b.goal / self.goal # make sure bars are scaled appropriately for display
+            # set the width scalar on the individual bars so the total adds up to 100 if all goals are met
+            # preventing overflow when bar value exceeds goal is now dealt with on bar level
+            b.bar_scaling = b.goal / self.goal
         self.show_summary = show_summary
         if show_summary:
             b_summary = summary_concat.join(b.summary for b in bars if (b.show_summary and len(b.summary) > 0))

@@ -70,11 +70,41 @@ def proj_progress():
                     summary_template='')
 
 
+def simple_overflow_case():
+    return(ProgressBar(value=110, goal=100, summary_template='{self.value}/{self.goal} done'))
+def overflow_case1():
+    return Progress(ProgressBar(value=101,
+                                goal=100,
+                                css_class='viz-component-bg-red',
+                                summary_template='bar1: {self.value}/{self.goal} done'),
+                    ProgressBar(value=250,
+                                goal=200,
+                                css_class='viz-component-bg-green',
+                                summary_template='bar2: {self.value}/{self.goal} done'),
+                    ProgressBar(value=150,
+                                goal=200,
+                                css_class='viz-component-bg-yellow',
+                                summary_template='bar3: {self.value}/{self.goal} done'),
+                    summary_template='', )
+
+def overflow_case2():
+    return Progress(ProgressBar(value=101,
+                                css_class='viz-component-bg-red',
+                                summary_template='bar1: {self.value}/{self.goal} done'),
+                    ProgressBar(value=250,
+                                css_class='viz-component-bg-green',
+                                summary_template='bar2: {self.value}/{self.goal} done'),
+                    goal = 200,
+                    summary_template='', )
+
 progress_bar_examples = dict(
     risks_progress=risks(),
     completed=completed(),
     patrol_progress=patrol_progress(),
-    proj_progress=proj_progress())
+    proj_progress=proj_progress(),
+    simple_overflow=simple_overflow_case(),
+    overflow_case1=overflow_case1(),
+    overflow_case2=overflow_case2())
 
 
 def progress_view(request):
