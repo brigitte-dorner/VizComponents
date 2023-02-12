@@ -188,7 +188,7 @@ vals = [0, 1, -1, 5, -5, 10, 10, -10, 100, -100, 1000, -1000]
 arrowds_center = dict(row1=[Arrow(val=vals[i]) for i in range(0, 6)],
                       row2=[Arrow(val=vals[i]) for i in range(6, 12)], )
 arrowds_optimal = dict(row1=[Arrow(val=vals[i], align='optimal', min_font_size=10) for i in range(0, 6)],
-                       row2=[Arrow(val=vals[i]) for i in range(6, 12)], )
+                       row2=[Arrow(val=vals[i], align='optimal', min_font_size=10) for i in range(6, 12)], )
 
 arrow_examples = dict(center=arrowds_center, optimal=arrowds_optimal)
 
