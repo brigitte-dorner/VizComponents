@@ -83,7 +83,7 @@ class StackedDoughnutChart:
         return self.make_chart_data()
 
     def make_chart_opts(self):
-        opts = {'responsive': self.responsive, }
+        opts = dict(responsive=self.responsive, )
         opts['plugins'] = {'legend': {'display': self.legend},
                            'title': {'display': self.title}}
         if len(self.center_text) > 0:
@@ -95,7 +95,7 @@ class StackedDoughnutChart:
             # If not, we can assume that the entry for the line is already in the
             # correct format for the plugin and just pass it through.
             dl_data = map(lambda l: {'text': l} if isinstance(l, str) else l, self.center_text)
-            opts['plugins'].update({'doughnutLabel': {'labels': list(dl_data)},})
+            opts['plugins'].update({'doughnutLabel': {'labels': list(dl_data)}, })
         # add other optional parameters and plugins here as needed
         opts.update(self.additional_opts)
         # return chart opts as JSON string

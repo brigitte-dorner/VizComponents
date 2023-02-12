@@ -77,7 +77,7 @@ class DoughnutChart:
         return self.make_chart_data()
 
     def make_chart_opts(self):
-        opts = {'responsive': self.responsive, }
+        opts = dict(responsive=self.responsive,)
         opts['plugins'] = {'legend': {'display': self.legend},
                            'title': {'display': self.title}}
         if len(self.center_text) > 0:
@@ -107,7 +107,7 @@ class DoughnutChart:
         chartdata = {'labels': self.data_labels,
                      'datasets': [{'label': self.chart_label,
                                    'data': self.data_values,
-                                   'backgroundColor': self.colors,}, ], }
+                                   'backgroundColor': self.colors, }, ], }
         chartdata.update(self.additional_data)  # merge in additional data, also gives the user the option to override
         # return chart data as JSON string
         return dumps(chartdata)

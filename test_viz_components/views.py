@@ -71,7 +71,9 @@ def proj_progress():
 
 
 def simple_overflow_case():
-    return(ProgressBar(value=110, goal=100, summary_template='{self.value}/{self.goal} done'))
+    return ProgressBar(value=110, goal=100, summary_template='{self.value}/{self.goal} done')
+
+
 def overflow_case1():
     return Progress(ProgressBar(value=101,
                                 goal=100,
@@ -87,6 +89,7 @@ def overflow_case1():
                                 summary_template='bar3: {self.value}/{self.goal} done'),
                     summary_template='', )
 
+
 def overflow_case2():
     return Progress(ProgressBar(value=101,
                                 css_class='viz-component-bg-red',
@@ -94,8 +97,9 @@ def overflow_case2():
                     ProgressBar(value=250,
                                 css_class='viz-component-bg-green',
                                 summary_template='bar2: {self.value}/{self.goal} done'),
-                    goal = 200,
+                    goal=200,
                     summary_template='', )
+
 
 progress_bar_examples = dict(
     risks_progress=risks(),
@@ -119,7 +123,8 @@ doughnut_data_1 = DoughnutChart(chart_label='Sites',
                                 # colors = ['red', 'green', 'blue'],
                                 center_text=['420',
                                              {'text': 'Sites', 'color': 'red'},
-                                             'Total'])
+                                             'Total'],
+                                responsive=True, )
 
 doughnut_data_2 = DoughnutChart(chart_label='Treatment Type',
                                 data_labels=['corrective', 'ROW', 'ET'],
@@ -145,7 +150,8 @@ sdoughnut_data_1 = StackedDoughnutChart(chart_label='Sites',
                                         center_text=[{'text': '420', 'color': 'black',
                                                       'font': {'size': 20, 'weight': 'bold', }},
                                                      {'text': 'Sites', 'color': 'black'},
-                                                     {'text': 'Total', 'color': 'black'}])
+                                                     {'text': 'Total', 'color': 'black'}],
+                                        responsive=True, )
 
 sdoughnut_chart_examples = dict(sdoughnut_data_1=sdoughnut_data_1)
 
@@ -185,6 +191,7 @@ arrowds_optimal = dict(row1=[Arrow(val=vals[i], align='optimal', min_font_size=1
                        row2=[Arrow(val=vals[i]) for i in range(6, 12)], )
 
 arrow_examples = dict(center=arrowds_center, optimal=arrowds_optimal)
+
 
 def arrow_view(request):
     return render(request, 'test_arrow.html', arrow_examples, )

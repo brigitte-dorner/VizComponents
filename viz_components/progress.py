@@ -3,7 +3,7 @@
     E.g., using a Bootstrap progress bar
 """
 from dataclasses import dataclass
-from typing import Union, Callable
+from typing import Union
 
 
 @dataclass
@@ -42,7 +42,7 @@ class ProgressBar:
     summary_template: str = None  # for summary text below the bar
     show_summary: bool = True
     css_class: str = 'progress-bar-success'
-    bar_scaling = 1  # scaling factor for bar width - typically set by via the Progress class if it needs to be changed
+    bar_scaling = 1  # scaling factor for bar width - typically set by the Progress class if it needs to be changed
 
     def percent_complete(self):
         return 100*self.value/self.goal if self.goal else 0
@@ -70,9 +70,9 @@ class ProgressBar:
 
     @property
     def p_width(self):
-        # hold bar size constant once goal is exceeded
-        return self.bar_scaling * (100 if self.goal > 0 and self.value > self.goal else self.percent_complete())
-        #return self.bar_scaling * self.percent_complete()
+        # hold bar size constant at the 100% width once goal is exceeded
+        b_width = 100 if self.goal > 0 and self.value > self.goal else self.percent_complete()
+        return self.bar_scaling * b_width
 
 
 class Progress(list):
@@ -92,7 +92,7 @@ class Progress(list):
                  goal: Union[int, float] = 0,
                  summary_template: str = '{self.value}/{self.goal}',  # show below bar if show_summary is set
                  show_summary: bool = True,
-                 summary_concat = ', '
+                 summary_concat=', '
                  ):
         super().__init__(bars)
         # goal should be passed as parameter in situations where all bars are populated from the same pool
@@ -101,12 +101,9 @@ class Progress(list):
         # as the sum of the goals for the individual bars
         self.goal = goal or sum(bar.goal for bar in bars)
         self.value = sum(bar.value for bar in bars)
-        # scale max bar width if total value exceeds the goal
-        #scalar = self.goal / self.value if self.goal > 0 and self.value > self.goal else 1
         for b in bars:
-            b.goal = b.goal if b.goal else self.goal # set goal from total if not supplied
+            b.goal = b.goal if b.goal else self.goal  # set goal from total if not supplied
             # set the width scalar on the individual bars so the total adds up to 100 if all goals are met
-            # preventing overflow when bar value exceeds goal is now dealt with on bar level
             b.bar_scaling = b.goal / self.goal
         self.show_summary = show_summary
         if show_summary:

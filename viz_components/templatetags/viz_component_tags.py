@@ -50,7 +50,6 @@ def progress_bar(*progress_bars, **kwargs):
     """
     progress = progress_bars[0] if len(progress_bars) == 1 and isinstance(progress_bars[0], Progress) \
         else Progress(*progress_bars, **kwargs)
-    print(progress)
     return dict(progress=progress)
 
 @register.inclusion_tag('viz_components/simple_progress.html')
