@@ -19,4 +19,13 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_CONFIGURATION" value="Django" />
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/test_viz_components/templates" />
+        <option value="$MODULE_DIR$/viz_components/templates" />
+      </list>
+    </option>
+  </component>
 </module>

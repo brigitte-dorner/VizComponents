@@ -1,0 +1,38 @@
+{
+  "name": "viz-components",
+  "version": "1.0.0",
+  "description": "Static dependencies for Hydronet Viz Components",
+  "author": "Driftwood Cove Designs <bdorner@driftwoodcove.ca>",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^16.5.2",
+    "browserify-shim": "^3.8.14",
+    "clean-css-cli": "^4.3.0",
+    "minify": "^9.2.0",
+    "minifyify": "^6.4.0",
+    "rimraf": "^2.7.1"
+  },
+  "dependencies": {
+    "bootstrap": "^3.4.1"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "chart.js": "global:Chart",
+    "bootstrap": "global:bootstrap"
+  },
+  "scripts": {
+    "clean": "rimraf ./viz_components/dist/* && rimraf ./viz_components/dist-min/* ",
+    "prebuild": "npm run clean -s",
+    "minify:viz-components-js": "minify ./viz_components/dist/viz_components.js > ./viz_components/dist/viz_components.min.js",
+    "build-full": "browserify -d ./viz_components/js/viz_components.js  > ./viz_components/dist/viz_components.js",
+    "build:viz-components-min-js": "browserify ./viz_components/js/viz_components.js -d -p [minifyify --map ./viz_components/dist-min/viz_components.min.js.map --output ./viz_components/dist-min/viz_components.min.js.map] > ./viz_components/dist-min/viz_components.min.js",
+    "build:viz-components-js": "browserify -d ./viz_components/js/viz_components.js -t [browserify-shim --global]  > ./viz_components/dist/viz_components.js",
+    "build:doughnut-label": "cp ./viz_components/js/chartjs-plugin-doughnutlabel.min.js  ./viz_components/dist/",
+    "build": "npm run build:viz-components-js && npm run build:doughnut-label",
+    "all": "npm run build"
+  }
+}

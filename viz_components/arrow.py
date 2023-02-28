@@ -104,7 +104,7 @@ class Arrow:
     canvas: str = ''  # css id for the canvas
 
     @property
-    def arrow_data(self):
+    def data(self):
         return self.make_data()
 
     @property

@@ -17,10 +17,28 @@ Dependencies: Chart.js, doughnutlabel plugin (use canned version in static/js/ch
 -->
 {% endcomment %}
 
-<!-- stacked doughnut charts can be styled using the appropriate container and/or canvas classes defined below -->
+<!-- doughnut charts can be styled using the appropriate container and/or canvas classes defined below -->
 <div class="viz-component-container viz-component-doughnut-chart-container viz-component-stacked-doughnut-chart-container">
-    <canvas is="stacked-doughnut-chart"
-            data-chartdata="{{chartdata}}"
-            data-chartopts="{{chartopts}}"
-            class="viz-component-canvas viz-component-doughnut-chart-canvas viz-component-stacked-doughnut-chart-canvas"
-            id={{canvas}}></canvas></div>
+  <canvas class="viz-component-canvas viz-component-doughnut-chart-canvas viz-component-stacked-doughnut-chart-canvas" id={{canvas}}></canvas>
+</div>
+
+<script>
+  /**
+   * Draw the bar chart
+   */
+    document.addEventListener("DOMContentLoaded", () =>  {
+      const chartdata = JSON.parse("{{chartdata|escapejs}}");
+      let chartopts = JSON.parse("{{chartopts|escapejs}}");
+      // add callbacks for custom tooltip formats here
+      chartopts.plugins['tooltip'] = {
+        callbacks: {
+          title: function (context) {
+            return context[0].dataset.catLabels[context[0].dataIndex]; },
+          label: function (context) {
+            let total = 0;
+            context.dataset.data.map(e => total += e);
+            return ' ' + context.parsed + ' (' + Math.round(100 * context.parsed / total) + '%)'; }, } };
+      const ctx = document.getElementById('{{canvas}}');
+      const chart = new Chart(ctx, {type: 'doughnut', data: chartdata, options: chartopts});
+    });
+</script>

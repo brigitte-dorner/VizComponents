@@ -1,3 +1,4 @@
+import copy
 from dataclasses import dataclass, field
 from json import dumps
 from .helpers import unique_id
@@ -58,9 +59,9 @@ class BarChart:
     canvas -- a unique id for the canvas that the widget is to be drawn on (auto-generated if not supplied)
     """
 
-    y_labels: list
+    y_labels: [list,tuple]
     y_label_images: dict
-    data: list
+    data: [list,tuple]
     bar_labels: dict
     color_pal: str = ''
     target: int = 100
@@ -69,7 +70,7 @@ class BarChart:
     title: bool = False
     additional_data: dict = field(default_factory=lambda: {})
     additional_opts: dict = field(default_factory=lambda: {})
-    canvas = ''
+    canvas: str = ''
 
     @property
     def canvas_id(self):
@@ -88,10 +89,10 @@ class BarChart:
 
     def make_chart_opts(self):
         """ Build options data structure for use with Chart.js (see Chart.js doc for details) """
-        bar_labels = self.bar_labels
+        bar_labels = copy.deepcopy(self.bar_labels)
         for bl in bar_labels:
             # need to bracket all data series with dummy entries so the target line can extend beyond the bars
-            bar_labels[bl]['labels'] = [''] + bar_labels[bl]['labels'] + ['']
+            bar_labels[bl]['labels'] = [''] + list(bar_labels[bl]['labels']) + ['']
         opts = {'responsive': self.responsive,
                 'indexAxis': 'y',  # for horizontal layout
                 'barValueSpacing': 20,
@@ -118,11 +119,12 @@ class BarChart:
 
         def prepare_ds(e):
             e['axis'] = 'y'  # needed for horizontal axis display
-            e['data'] = [0] + e['data'] + [0]  # dummy entries
+            e['data'] = [0] + list(e['data']) + [0]  # dummy entries
             return e
 
-        ds = list(map(prepare_ds, self.data))
-        dslabels = [""] + self.y_labels + [""]  # same dummy entry padding treatment for category labels
+        data = list(copy.deepcopy(self.data))
+        ds = list(map(prepare_ds, data))
+        dslabels = [""] + list(self.y_labels) + [""]  # same dummy entry padding treatment for category labels
         n = len(ds[0]['data'])
         # now add the target as a dotted line, same axis as the horizontal bars
         target_line = {'type': 'line',

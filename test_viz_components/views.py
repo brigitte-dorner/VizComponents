@@ -1,10 +1,11 @@
+from itertools import chain
 from django.shortcuts import render
+from django.templatetags.static import static
 from viz_components.progress import *
 from viz_components.bar_chart import BarChart
 from viz_components.doughnut_chart import DoughnutChart
 from viz_components.stacked_doughnut_chart import StackedDoughnutChart
 from viz_components.arrow import Arrow
-from itertools import chain
 
 
 # progress bar test cases
@@ -162,17 +163,19 @@ def stacked_doughnut_view(request):
 
 # bar chart test cases
 
-bar_data = BarChart(y_labels=['Area', 'Trees', '$$'],
-                    y_label_images={'Area': 'area.png', 'Trees': 'tree.png', '$$': 'dollar.png', },
-                    data=[{'label': 'last year',
+bar_data = BarChart(y_labels=('Area', 'Trees', '$$'),
+                    y_label_images={'Area': static('img/area.png'),
+                                    'Trees': static('img/tree.png'),
+                                    '$$': static('img/dollar.png'), },
+                    data=({'label': 'last year',
                            'backgroundColor': 'grey',
-                           'data': [100, 90, 140], },
+                           'data': (100, 90, 140), },
                           {'label': 'current',
                            'backgroundColor': 'rgb(180, 10, 50)',
-                           'data': [80, 40, 50], }, ],
-                    bar_labels={'last year': {'labels': ['1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'],
+                           'data': (80, 40, 50), }, ),
+                    bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
                                               'color': 'white'},
-                                'current': {'labels': ['920ha', '80', '$1,220,650'],
+                                'current': {'labels': ('920ha', '80', '$1,220,650'),
                                             'color': 'white'}, })
 
 bar_chart_examples = dict(bar_data=bar_data)

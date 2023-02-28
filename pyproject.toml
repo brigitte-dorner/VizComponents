@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "viz_components"
+version = "0.0.3"
+authors = [
+  { name="Brigitte Dorner", email="bdorner@driftwoodcove.ca" },
+]
+description = "A set of Django custom visual display components for use with Hydronet"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/brigitte-dorner/VizComponents"
+"Bug Tracker" = "https://github.com/brigitte-dorner/VizComponents/issues"

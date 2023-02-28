@@ -31,13 +31,13 @@ def bar_chart(canvas_id, chartdata, chartopts):
     return(dict(canvas=canvas_id, chartdata=chartdata, chartopts=chartopts))
 
 @register.inclusion_tag('viz_components/arrow.html')
-def arrow(canvas_id, arrow_data):
+def arrow(canvas_id, data):
     """
     Render the arrow using the specs provided in arrow_data
     Use an instance of the Arrow class to generate the canvas_id and arrow_data object
     See arrow.py for details
     """
-    return(dict(canvas=canvas_id, arrow_data=arrow_data))
+    return(dict(canvas=canvas_id, data=data))
 
 @register.inclusion_tag('viz_components/progress.html')
 def progress_bar(*progress_bars, **kwargs):
