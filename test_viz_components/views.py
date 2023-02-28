@@ -178,7 +178,23 @@ bar_data = BarChart(y_labels=('Area', 'Trees', '$$'),
                                 'current': {'labels': ('920ha', '80', '$1,220,650'),
                                             'color': 'white'}, })
 
-bar_chart_examples = dict(bar_data=bar_data)
+bar_data_no_target = BarChart(y_labels=('Area', 'Trees', '$$'),
+                              y_label_images={'Area': static('img/area.png'),
+                                              'Trees': static('img/tree.png'),
+                                              '$$': static('img/dollar.png'), },
+                              data=({'label': 'last year',
+                                     'backgroundColor': 'grey',
+                                     'data': (100, 90, 140), },
+                                    {'label': 'current',
+                                     'backgroundColor': 'rgb(180, 10, 50)',
+                                     'data': (80, 40, 50), },),
+                              bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
+                                                        'color': 'white'},
+                                          'current': {'labels': ('920ha', '80', '$1,220,650'),
+                                                      'color': 'white'}, },
+                              show_target=False)
+
+bar_chart_examples = dict(bar_data1=bar_data, bar_data2=bar_data_no_target)
 
 
 def bar_view(request):

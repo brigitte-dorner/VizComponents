@@ -67,14 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const addTargetLabel = {
         id: 'targetLabelPlugin',
         afterDraw(chart, args, options) {
-            let ctx = chart.ctx;
-            let ds = chart.getDatasetMeta(0); // dataset 0 is the target line
-            const endPt = ds.data[0];
-            ctx.textAlign = "center";
-            ctx.textBaseline = "bottom"; // vertical alignment
-            ctx.fillStyle = 'black';
-            // todo: font styling
-            ctx.fillText('Target', endPt.x, endPt.y - 10);
+            if (options['display']) {
+                let ctx = chart.ctx;
+                let ds = chart.getDatasetMeta(0); // dataset 0 is the target line
+                const endPt = ds.data[0];
+                ctx.textAlign = "center";
+                ctx.textBaseline = "bottom"; // vertical alignment
+                ctx.fillStyle = 'black';
+                // todo: font styling
+                ctx.fillText('Target', endPt.x, endPt.y - 10);
+            }
         },
     };
 

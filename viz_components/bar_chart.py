@@ -44,6 +44,8 @@ class BarChart:
               displayed on a single value axis.Target is therefore preset to 100 (100%).
               Override target value here if required.
 
+    show_target -- show a target line?
+
     responsive -- should chart be responsive?
 
     legend -- show legend?
@@ -59,12 +61,13 @@ class BarChart:
     canvas -- a unique id for the canvas that the widget is to be drawn on (auto-generated if not supplied)
     """
 
-    y_labels: [list,tuple]
+    y_labels: [list, tuple]
     y_label_images: dict
-    data: [list,tuple]
+    data: [list, tuple]
     bar_labels: dict
     color_pal: str = ''
     target: int = 100
+    show_target: bool = True
     responsive: bool = True
     legend: bool = False
     title: bool = False
@@ -105,7 +108,8 @@ class BarChart:
                 # data and parameters for plugins are passed through the plugins dict as part of the chart options
                 'plugins': {'legend': {'display': False, },
                             'labelImagesPlugin': self.y_label_images,
-                            'barLabelPlugin': bar_labels, }, }
+                            'barLabelPlugin': bar_labels,
+                            'targetLabelPlugin': {'display': self.show_target, }, }, }
         # add other optional parameters and plugins here as needed
         opts.update(self.additional_opts)
         # return chart opts as JSON string
@@ -124,21 +128,22 @@ class BarChart:
 
         data = list(copy.deepcopy(self.data))
         ds = list(map(prepare_ds, data))
-        dslabels = [""] + list(self.y_labels) + [""]  # same dummy entry padding treatment for category labels
-        n = len(ds[0]['data'])
-        # now add the target as a dotted line, same axis as the horizontal bars
-        target_line = {'type': 'line',
-                       'axis': 'y',
-                       'data': [100 for i in range(0, n)],
-                       'backgroundColor': "black",
-                       'borderColor': "black",
-                       'fill': False,
-                       'pointStyle': False,
-                       'borderDash': [3, 10],
-                       }
-        # put the target line first here, so it is drawn over top of the bars
-        ds = [target_line] + ds
-        chartdata = {'labels': dslabels, 'datasets': ds, }
-        chartdata.update(self.additional_data)  # merge in additional data; this also gives user the option to override
+        ds_labels = [""] + list(self.y_labels) + [""]  # same dummy entry padding treatment for category labels
+        if self.show_target:
+            n = len(ds[0]['data'])
+            # now add the target as a dotted line, same axis as the horizontal bars
+            target_line = {'type': 'line',
+                           'axis': 'y',
+                           'data': [100 for i in range(0, n)],
+                           'backgroundColor': "black",
+                           'borderColor': "black",
+                           'fill': False,
+                           'pointStyle': False,
+                           'borderDash': [3, 10],
+                           }
+            # put the target line first here, so it is drawn over top of the bars
+            ds = [target_line] + ds
+        chart_data = {'labels': ds_labels, 'datasets': ds, }
+        chart_data.update(self.additional_data)  # merge in additional data; this also gives user the option to override
         # return chart data as JSON string
-        return dumps(chartdata)
+        return dumps(chart_data)
