@@ -53,7 +53,7 @@ def bar_view(request):
 
 **Delta Arrow:**
 
-![](img/arrows.png)
+<img src="img/arrows.png" width="500"/>
 
 An up- or down- arrow designed to represent change in a metric, drawn using html canvas.
 
@@ -67,7 +67,7 @@ An up- or down- arrow designed to represent change in a metric, drawn using html
 
 **Progress Bar:**
 
-![](img/progress.png)
+<img src="img/progress.png" width="300"/>
 
 A progress bar that may potentially include multiple components representing different 
 stages of progress towards a goal, or multiple components progressing towards component-specific sub-goals.
@@ -87,7 +87,7 @@ an instance of _Progress_
 
 **Simple Progress Bar:**
 
-![](img/progress_simple.png)
+<img src="img/progress_simple.png" width="300"/>
 
 A progress bar that shows progress in a single metric towards a goal.
 Utilizes the bootstrap progress bar component.
@@ -101,7 +101,7 @@ an instance of _ProgressBar_
 
 **Doughnut Chart**
 
-![](img/doughnut.png)
+<img src="img/doughnut.png" width="200"/>
 
 A doughnut chart with optional center text. Implemented using chart.js.
 
@@ -118,7 +118,7 @@ A doughnut chart with optional center text. Implemented using chart.js.
 
 **Stacked Doughnut Chart**
 
-![img.png](img/stacked_doughnut.png)
+<img  src="img/stacked_doughnut.png" width="200"/>
 
 A doughnut chart with optional center text and multiple rings representing a breakdown into
 a set of two hierarchical categories. Implemented using chart.js.
