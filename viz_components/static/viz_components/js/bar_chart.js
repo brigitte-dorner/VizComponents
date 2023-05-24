@@ -12,17 +12,20 @@ document.addEventListener("DOMContentLoaded", () => {
             let ctx = chart.ctx;
             const xAxis = chart.scales['x'];
             const yAxis = chart.scales['y'];
-            yAxis._labelItems.forEach((dataCat, index) => {
-                if (dataCat.label in options) { // options
-                    const y = yAxis.getPixelForTick(index);
-                    let image = new Image();
-                    image.src = options[dataCat.label];
-                    // yAxis.width conveniently seems to include the width of the text labels
-                    // so putting the image just to the left of that seems to work fine
-                    const xOffset = yAxis.width + image.width;
-                    ctx.drawImage(image, xAxis.left - xOffset, y - Math.round(image.height / 2));
-                }
-            });
+            if ( options.length > 0 ) {
+                yAxis._labelItems.forEach((dataCat, index) => {
+                    //if (dataCat.label in options) { // options
+                    if (options[index].length > 0) {
+                        let image = new Image();
+                        image.src = options[index];
+                        const y = yAxis.getPixelForTick(index);
+                         // yAxis.width conveniently seems to include the width of the text labels
+                        // so putting the image just to the left of that seems to work fine
+                        const xOffset = yAxis.width + image.width;
+                        ctx.drawImage(image, xAxis.left - xOffset, y - Math.round(image.height / 2));
+                    }
+                });
+            }
         }
     };
 
@@ -75,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.textBaseline = "bottom"; // vertical alignment
                 ctx.fillStyle = 'black';
                 // todo: font styling
-                ctx.fillText('Target', endPt.x, endPt.y - 10);
+                ctx.fillText(options['label'], endPt.x, endPt.y - 10);
             }
         },
     };

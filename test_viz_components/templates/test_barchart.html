@@ -3,6 +3,14 @@
 {% block title %} Bar Chart {% endblock title %}
 
 {% block content %}
-  {% bar_chart bar_data1.canvas_id bar_data1.chartdata bar_data1.chartopts %}
-  {% bar_chart bar_data2.canvas_id bar_data2.chartdata bar_data2.chartopts %}
+    <div style="margin-left: 10px;">
+    <h3>Default</h3>
+    {% bar_chart bar_data1.canvas_id bar_data1.chartdata bar_data1.chartopts %}
+    <h3>No Target</h3>
+    {% bar_chart bar_data2.canvas_id bar_data2.chartdata bar_data2.chartopts %}
+    <h3>Custom taget label and icon-only y-axis labels</h3>
+    {% bar_chart bar_data3.canvas_id bar_data3.chartdata bar_data3.chartopts %}
+    <h3>Text-only labels on y axis</h3>
+    {% bar_chart bar_data4.canvas_id bar_data4.chartdata bar_data4.chartopts %}
+    </div>
 {% endblock content %}

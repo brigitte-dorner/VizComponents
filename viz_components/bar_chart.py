@@ -62,15 +62,16 @@ class BarChart:
     """
 
     y_labels: [list, tuple]
-    y_label_images: dict
     data: [list, tuple]
     bar_labels: dict
+    y_label_images: [list, tuple] = ()
     color_pal: str = ''
     target: int = 100
     show_target: bool = True
     responsive: bool = True
     legend: bool = False
     title: bool = False
+    target_label: str = 'Target'
     additional_data: dict = field(default_factory=lambda: {})
     additional_opts: dict = field(default_factory=lambda: {})
     canvas: str = ''
@@ -107,9 +108,15 @@ class BarChart:
                           'border': {'display': False}, }, },
                 # data and parameters for plugins are passed through the plugins dict as part of the chart options
                 'plugins': {'legend': {'display': False, },
-                            'labelImagesPlugin': self.y_label_images,
                             'barLabelPlugin': bar_labels,
-                            'targetLabelPlugin': {'display': self.show_target, }, }, }
+                            'targetLabelPlugin': {'display': self.show_target, 'label': self.target_label}, }, }
+        y_label_images = list(self.y_label_images)
+        if len(y_label_images) > 0:
+            # pad with dummy entries
+            y_label_images = [''] + y_label_images + ['']
+            # add plugin to show images next to y labels
+            opts['plugins']['labelImagesPlugin'] = y_label_images
+
         # add other optional parameters and plugins here as needed
         opts.update(self.additional_opts)
         # return chart opts as JSON string

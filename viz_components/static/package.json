@@ -31,7 +31,7 @@
     "build-full": "browserify -d ./viz_components/js/viz_components.js  > ./viz_components/dist/viz_components.js",
     "build:viz-components-min-js": "browserify ./viz_components/js/viz_components.js -d -p [minifyify --map ./viz_components/dist-min/viz_components.min.js.map --output ./viz_components/dist-min/viz_components.min.js.map] > ./viz_components/dist-min/viz_components.min.js",
     "build:viz-components-js": "browserify -d ./viz_components/js/viz_components.js -t [browserify-shim --global]  > ./viz_components/dist/viz_components.js",
-    "build:doughnut-label": "cp ./viz_components/js/chartjs-plugin-doughnutlabel.min.js  ./viz_components/dist/",
+    "build:doughnut-label": "cp ../../../HydroNet/src/hydronet/client_side/src/chartjs/chartjs-plugin-doughnutlabel.min.js  ./viz_components/dist/",
     "build": "npm run build:viz-components-js && npm run build:doughnut-label",
     "all": "npm run build"
   }

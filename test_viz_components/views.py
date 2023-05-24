@@ -164,9 +164,9 @@ def stacked_doughnut_view(request):
 # bar chart test cases
 
 bar_data = BarChart(y_labels=('Area', 'Trees', '$$'),
-                    y_label_images={'Area': static('img/area.png'),
-                                    'Trees': static('img/tree.png'),
-                                    '$$': static('img/dollar.png'), },
+                    y_label_images=(static('img/area.png'),
+                                    static('img/tree.png'),
+                                    static('img/dollar.png')),
                     data=({'label': 'last year',
                            'backgroundColor': 'grey',
                            'data': (100, 90, 140), },
@@ -179,9 +179,9 @@ bar_data = BarChart(y_labels=('Area', 'Trees', '$$'),
                                             'color': 'white'}, })
 
 bar_data_no_target = BarChart(y_labels=('Area', 'Trees', '$$'),
-                              y_label_images={'Area': static('img/area.png'),
-                                              'Trees': static('img/tree.png'),
-                                              '$$': static('img/dollar.png'), },
+                              y_label_images=(static('img/area.png'),
+                                              static('img/tree.png'),
+                                              static('img/dollar.png')),
                               data=({'label': 'last year',
                                      'backgroundColor': 'grey',
                                      'data': (100, 90, 140), },
@@ -194,7 +194,35 @@ bar_data_no_target = BarChart(y_labels=('Area', 'Trees', '$$'),
                                                       'color': 'white'}, },
                               show_target=False)
 
-bar_chart_examples = dict(bar_data1=bar_data, bar_data2=bar_data_no_target)
+bar_data_no_images = BarChart(y_labels=('Area', 'Trees', '$$'),
+                            data=({'label': 'last year',
+                           'backgroundColor': 'grey',
+                           'data': (100, 90, 140), },
+                          {'label': 'current',
+                           'backgroundColor': 'rgb(180, 10, 50)',
+                           'data': (80, 40, 50), }, ),
+                    bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
+                                              'color': 'white'},
+                                'current': {'labels': ('920ha', '80', '$1,220,650'),
+                                            'color': 'white'}, },)
+
+bar_data_custom = BarChart(y_labels=('', '', ''),
+                           y_label_images=(static('img/area.png'),
+                                           static('img/tree.png'),
+                                           static('img/dollar.png')),
+                           data=({'label': 'last year',
+                           'backgroundColor': 'grey',
+                           'data': (100, 90, 140), },
+                          {'label': 'current',
+                           'backgroundColor': 'rgb(180, 10, 50)',
+                           'data': (80, 40, 50), }, ),
+                    bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
+                                              'color': 'white'},
+                                'current': {'labels': ('920ha', '80', '$1,220,650'),
+                                            'color': 'white'}, },
+                    target_label='Plan')
+bar_chart_examples = dict(bar_data1=bar_data, bar_data2=bar_data_no_target,
+                          bar_data3=bar_data_custom, bar_data4=bar_data_no_images)
 
 
 def bar_view(request):
@@ -227,3 +255,29 @@ all_examples = dict(chain(progress_bar_examples.items(),
 
 def test_all_view(request):
     return render(request, 'test_all.html', all_examples)
+
+
+active_dashboard_bar_data = BarChart(y_labels=('Area', 'Trees', '$$'),
+                    y_label_images={'Area': static('img/area.png'),
+                                    'Trees': static('img/tree.png'),
+                                    '$$': static('img/dollar.png'), },
+                    data=({'label': 'last year',
+                           'backgroundColor': 'grey',
+                           'data': (100, 90, 140), },
+                          {'label': 'current',
+                           'backgroundColor': 'rgb(180, 10, 50)',
+                           'data': (80, 40, 50), }, ),
+                    bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
+                                              'color': 'white'},
+                                'current': {'labels': ('920ha', '80', '$1,220,650'),
+                                            'color': 'white'}, })
+
+active_dashboard_data = dict(
+    delta_area=Arrow(-10),
+    delta_trees=Arrow(+20),
+    delta_cost=Arrow(5),
+    )
+
+
+def dashboard_active(request):
+    return render(request, 'viz_components/dashboard_active.html', active_dashboard_data)

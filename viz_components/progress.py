@@ -109,4 +109,4 @@ class Progress(list):
         if show_summary:
             b_summary = summary_concat.join(b.summary for b in bars if (b.show_summary and len(b.summary) > 0))
             p_summary = summary_template.format(self=self)
-            self.summary = b_summary + ', ' + p_summary if len(p_summary) > 0 else b_summary
+            self.summary = summary_concat.join((b_summary, p_summary)) if ((len(b_summary) > 0) and (len(p_summary) > 0)) else b_summary if (len(b_summary) > 0) else p_summary

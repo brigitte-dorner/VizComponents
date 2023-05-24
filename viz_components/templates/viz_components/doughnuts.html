@@ -1,0 +1,25 @@
+{% comment %}
+<!--
+Pane with a set of doughnut charts
+Usage: {% doughnuts data%} where
+data: is an object of class Doughnuts
+
+Dependencies: doughnut_chart template tag
+-->
+{% endcomment %}
+
+{% load viz_component_tags %}
+
+<div class="doughnut-pane"
+     style="display: grid; grid-template-columns: {% for d in data %} fr {%  endfor %}; grid-template-rows: auto auto;">
+    {% for ds in data %}
+        <div class="doughnut-heading" style="grid-column: {{ forloop.counter }}; grid-row: 2;">
+            {{ ds.label }}
+        </div>
+    {% endfor %}
+    {% for ds in data %}
+        <div class="doughnut-img" style="grid-column: {{ forloop.counter }}; grid-row: 3;">
+            {% doughnut_chart ds.canvas_id ds.chartdata ds.chartopts %}
+        </div>
+    {% endfor %}
+</div>
