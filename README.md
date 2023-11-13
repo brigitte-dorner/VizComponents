@@ -140,12 +140,17 @@ a set of two hierarchical categories. Implemented using chart.js.
 
 ![](img/barchart.png)
 
+![stacked_bar_chart.png](img%2Fstacked_bar_chart.png)
 A specialized bar chart that compares a set of metrics to benchmarks. (E.g.,
 metrics in current year vs metrics in previous year).
 Both the metrics and the benchmarks are represented by horizontal bars.
 An optional target line can be added to show metrics also in relation to
-that target. Implemented using chart.js.
-
+that target.
+The chart can also be configured to show the data for each metric as a stacked bar.
+This is useful, for example, for showing progress through different stages
+(planned/in progress/complete), or to show breakdown into categories (e.g. NERC/non-NERC)
+Implemented using chart.js
+.
 * Python data generator class: _BarChart_
 * Template tag: _bar_chart_
 * Parameters for template tag: _canvas_id, chartdata, chartopts_, 
