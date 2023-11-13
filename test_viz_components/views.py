@@ -195,34 +195,59 @@ bar_data_no_target = BarChart(y_labels=('Area', 'Trees', '$$'),
                               show_target=False)
 
 bar_data_no_images = BarChart(y_labels=('Area', 'Trees', '$$'),
-                            data=({'label': 'last year',
-                           'backgroundColor': 'grey',
-                           'data': (100, 90, 140), },
-                          {'label': 'current',
-                           'backgroundColor': 'rgb(180, 10, 50)',
-                           'data': (80, 40, 50), }, ),
-                    bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
-                                              'color': 'white'},
-                                'current': {'labels': ('920ha', '80', '$1,220,650'),
-                                            'color': 'white'}, },)
+                              data=({'label': 'last year',
+                                     'backgroundColor': 'grey',
+                                     'data': (100, 90, 80), },
+                                    {'label': 'current',
+                                     'backgroundColor': 'rgb(180, 10, 50)',
+                                     'data': (80, 40, 50), }, ),
+                              bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
+                                                        'color': 'white'},
+                                          'current': {'labels': ('920ha', '80', '$1,220,650'),
+                                                      'color': 'white'}, },)
 
 bar_data_custom = BarChart(y_labels=('', '', ''),
                            y_label_images=(static('img/area.png'),
                                            static('img/tree.png'),
                                            static('img/dollar.png')),
                            data=({'label': 'last year',
-                           'backgroundColor': 'grey',
-                           'data': (100, 90, 140), },
-                          {'label': 'current',
-                           'backgroundColor': 'rgb(180, 10, 50)',
-                           'data': (80, 40, 50), }, ),
-                    bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
-                                              'color': 'white'},
-                                'current': {'labels': ('920ha', '80', '$1,220,650'),
-                                            'color': 'white'}, },
-                    target_label='Plan')
+                                  'backgroundColor': 'grey',
+                                  'data': (100, 90, 140), },
+                                 {'label': 'current',
+                                  'backgroundColor': 'rgb(180, 10, 50)',
+                                  'data': (80, 40, 50), }, ),
+                           bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
+                                                     'color': 'white'},
+                                       'current': {'labels': ('920ha', '80', '$1,220,650'),
+                                                   'color': 'white'}, },
+                           target_label='Plan')
+
+bar_data_stacked = BarChart(y_labels=('Area', 'Trees', '$$'),
+                            y_label_images=(static('img/area.png'),
+                                            static('img/tree.png'),
+                                            static('img/dollar.png')),
+                            data=({'label': 'planned',
+                                   'backgroundColor': 'grey',
+                                   'data': (100, 90, 140), },
+                                  {'label': 'in progress',
+                                   'backgroundColor': 'blue',
+                                   'data': (80, 40, 50), },
+                                  {'label': 'complete',
+                                   'backgroundColor': 'green',
+                                   'data': (80, 40, 50), }, ),
+                            bar_labels={'planned': {'labels': ('1,200ha', '190', '$4,300,450'),
+                                                    'color': 'white'},
+                                        'in progress': {'labels': ('920ha', '80', '$1,220,650'),
+                                                        'color': 'white'},
+                                        'complete': {'labels': ('20ha', '10', '$220,650'),
+                                                     'color': 'white'},
+                                        },
+                            target_label='Plan',
+                            stacked=True, )
+
 bar_chart_examples = dict(bar_data1=bar_data, bar_data2=bar_data_no_target,
-                          bar_data3=bar_data_custom, bar_data4=bar_data_no_images)
+                          bar_data3=bar_data_custom, bar_data4=bar_data_no_images,
+                          bar_data5=bar_data_stacked)
 
 
 def bar_view(request):
@@ -258,25 +283,25 @@ def test_all_view(request):
 
 
 active_dashboard_bar_data = BarChart(y_labels=('Area', 'Trees', '$$'),
-                    y_label_images={'Area': static('img/area.png'),
-                                    'Trees': static('img/tree.png'),
-                                    '$$': static('img/dollar.png'), },
-                    data=({'label': 'last year',
-                           'backgroundColor': 'grey',
-                           'data': (100, 90, 140), },
-                          {'label': 'current',
-                           'backgroundColor': 'rgb(180, 10, 50)',
-                           'data': (80, 40, 50), }, ),
-                    bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
-                                              'color': 'white'},
-                                'current': {'labels': ('920ha', '80', '$1,220,650'),
-                                            'color': 'white'}, })
+                                     y_label_images={'Area': static('img/area.png'),
+                                                     'Trees': static('img/tree.png'),
+                                                     '$$': static('img/dollar.png'), },
+                                     data=({'label': 'last year',
+                                            'backgroundColor': 'grey',
+                                            'data': (100, 90, 140), },
+                                           {'label': 'current',
+                                            'backgroundColor': 'rgb(180, 10, 50)',
+                                            'data': (80, 40, 50), }, ),
+                                     bar_labels={'last year': {'labels': ('1,200ha (2021)', '190 (2021)', '$4,300,450 (2021)'),
+                                                               'color': 'white'},
+                                                 'current': {'labels': ('920ha', '80', '$1,220,650'),
+                                                             'color': 'white'}, })
 
 active_dashboard_data = dict(
     delta_area=Arrow(-10),
     delta_trees=Arrow(+20),
     delta_cost=Arrow(5),
-    )
+)
 
 
 def dashboard_active(request):

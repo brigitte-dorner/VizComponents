@@ -45,18 +45,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         const barWidth = ds.data[j].$context.element.width;
                         const text = options[dsName].labels[j];
                         const textWidth = ctx.measureText(text).width;
+                        let showText = true;
                         let textAnchor = ds.data[j].getCenterPoint();
                         if (barWidth > textWidth) {
                             ctx.textAlign = "center";
                         } else {
                             textAnchor.x = ds.data[j].$context.element.x;
                             textAnchor.y = ds.data[j].$context.element.y;
-                            ctx.textAlign = "left";
+                            if (chart.scales['y'].stacked) {
+                                showText = false;
+                            } else {
+                                ctx.textAlign = "left";
+                            }
                         }
                         ctx.textBaseline = "middle"; // vertical align to center of bar
                         ctx.fillStyle = options[dsName].color || options.color;
                         // todo: allow for font styling
-                        if (textWidth > 0) ctx.fillText(text, textAnchor.x, textAnchor.y);
+                        if (showText && textWidth > 0) ctx.fillText(text, textAnchor.x, textAnchor.y);
                     }
                 }
             }
@@ -93,7 +98,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 'label': function (context) {
                     // simplified tooltip for now, just show the type of dataset;
                     // todo: may want to add value as percentage here
+                    console.log(context);
+                    var cont = context;
                     return context.dataset.label || '';
+                    //return options[context.dataset.label].labels[j]
                 }
             }
         }
