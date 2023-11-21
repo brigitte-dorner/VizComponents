@@ -1,5 +1,6 @@
 // this eventListener collects all the canvases in the DOM that are marked as 'is=bar-chart' and draws
 // bar charts as defined by the data-chartdata and data-chartopts attributes
+
 document.addEventListener("DOMContentLoaded", () => {
 
     // Define a chart.js plugin for adding an image to the category labels on the y-axis.
@@ -32,7 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Define a chart.js plugin for adding text labels inside each horizontal bar.
     const addBarLabels = {
         id: 'barLabelPlugin',
-        afterDraw(chart, args, options) {
+        // note: need to use afterDatasetsDraw here.
+        // If using afterDraw, the text labels will end up on top of everything, including the tooltips :(
+        // (see https://stackoverflow.com/questions/40243518/charts-js-tooltip-overlapping-text-on-chart)
+        afterDatasetsDraw(chart, args, options) {
             let ctx = chart.ctx;
             for (let i = 0; i < chart.data.datasets.length; i++) {
                 let ds = chart.getDatasetMeta(i); // get meta info for this dataset
@@ -47,14 +51,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         const textWidth = ctx.measureText(text).width;
                         let showText = true;
                         let textAnchor = ds.data[j].getCenterPoint();
-                        if (barWidth > textWidth) {
+                        if (barWidth > textWidth) { // label text fits into the bar - center it there
                             ctx.textAlign = "center";
-                        } else {
+                        } else { // text doesn't fit into the bar
                             textAnchor.x = ds.data[j].$context.element.x;
                             textAnchor.y = ds.data[j].$context.element.y;
-                            if (chart.scales['y'].stacked) {
+                            if (chart.options.scales['y'].stacked) {
+                                // if we are dealing with a stacked bar chart, only show text if it fits into the bar
                                 showText = false;
                             } else {
+                                console.log('showing text to right of bar');
+                                // show text to the right of the bar
                                 ctx.textAlign = "left";
                             }
                         }
@@ -94,14 +101,26 @@ document.addEventListener("DOMContentLoaded", () => {
         let chartopts = JSON.parse(canvas.dataset.chartopts);
         // set up tooltip to show when hovering over a bar
         chartopts.plugins['tooltip'] = {
+            'backgroundColor' : 'rgba(0, 0, 0, 1)',
             'callbacks': {
+                'title': function(context) {
+                    return ''; // title is y axis category (i.e., the metric) by default; don't show this
+                },
                 'label': function (context) {
-                    // simplified tooltip for now, just show the type of dataset;
-                    // todo: may want to add value as percentage here
-                    console.log(context);
-                    var cont = context;
-                    return context.dataset.label || '';
-                    //return options[context.dataset.label].labels[j]
+                    // we want the type of bar here (e.g., 'current' or 'planned',
+                    // followed by the text label shown inside the bar in brackets.
+                    // the latter is handy because in stacked bar charts the label inside the bar
+                    // sometimes won't be shown because of lack of space, so the tooltip is the only
+                    // way for the user to get that information.
+                    const ds = context.dataset.label; // this is the bar type
+                   if (ds) {
+                       // get the labels for this bar type; they are passed in through the barLabelPlugin.
+                        const labels = context.chart.config.options.plugins['barLabelPlugin'][ds].labels;
+                        // dataIndex is the numeric index on the y-axis (i.e., corresponding to the metric)
+                        return ds + ' (' + labels[context.dataIndex] + ')';
+                    } else {
+                        return '';
+                    }
                 }
             }
         }
