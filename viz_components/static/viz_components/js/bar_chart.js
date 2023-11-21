@@ -138,6 +138,14 @@ document.addEventListener("DOMContentLoaded", () => {
     charts.forEach((chart) => {
         draw(chart);
     });
+
+    // Expose the module functionality
+    module.exports = {
+      draw: draw
+    };
+    // Hack:  add the exports directly to variable exposed by package.
+    window.viz_components = window.viz_components || {};
+    window.viz_components.bar_chart = module.exports;
 });
 
 
