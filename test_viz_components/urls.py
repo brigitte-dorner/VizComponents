@@ -10,6 +10,7 @@ urlpatterns = [
     path('bar/', views.bar_view),
     path('arrow/', views.arrow_view),
     path('all/', views.test_all_view),
+    path('', views.test_all_view),
     path('dashboard_active/', views.dashboard_active),
 ]
 

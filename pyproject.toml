@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "viz_components"
-version = "0.0.5"
+version = "0.0.6"
 authors = [
   { name="Brigitte Dorner", email="bdorner@driftwoodcove.ca" },
 ]
@@ -17,7 +17,6 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "seaborn"
 ]
 
 [project.urls]

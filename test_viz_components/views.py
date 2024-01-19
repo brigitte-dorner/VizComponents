@@ -152,6 +152,7 @@ sdoughnut_data_1 = StackedDoughnutChart(chart_label='Sites',
                                                       'font': {'size': 20, 'weight': 'bold', }},
                                                      {'text': 'Sites', 'color': 'black'},
                                                      {'text': 'Total', 'color': 'black'}],
+                                        border_width=5,
                                         responsive=True, )
 
 sdoughnut_chart_examples = dict(sdoughnut_data_1=sdoughnut_data_1)

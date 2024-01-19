@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from json import dumps
-from .color_mngmnt import make_color_pal
+# from .color_mngmnt import make_color_pal
 from .helpers import unique_id
 
 # input data generator for the doughnut chart widget
@@ -26,11 +26,6 @@ class StackedDoughnutChart:
 
     summary_colors -- the colors to use for the summary categories
 
-    color_pal -- the name of the color palette to use;
-                 defaults to the default palette defined in color_mngmnt.py
-                 note that color_pal is ignored if colors are specified directly
-                 in via colors
-
     center_text: text to appear in the center of the chart
                   center_text should be a list, with each entry corresponding to a line of text;
                   the lines may be given either as a simple text strings
@@ -42,6 +37,7 @@ class StackedDoughnutChart:
                   If a list of dict is given here, it will be converted to JSON
                   and passed on to the javascript doughnutlabel API without any processing.
 
+    border_width: width of the border around the segments - may need to adjust this depending on the size of the chart
     additional_data: anything specified here will be passed through to the chart 'data'.
                      See Chart.js documentation for available settings.
                      Anything set in additional_data will override defaults and entries to
@@ -60,14 +56,20 @@ class StackedDoughnutChart:
     chart_label: str = ''
     colors: list = field(default_factory=lambda: [])
     summary_colors: list = field(default_factory=lambda: [])
-    color_pal: str = ''
+    #color_pal: str = ''
     center_text: list = field(default_factory=lambda: [])
+    border_width: int = 3
     responsive: bool = False
     legend: bool = False
     title: bool = False
     additional_data: dict = field(default_factory=lambda: {})
     additional_opts: dict = field(default_factory=lambda: {})
     canvas: str = ''
+
+    @property
+    def label(self):
+        """ Return chart label """
+        return self.chart_label
 
     @property
     def canvas_id(self):
@@ -105,21 +107,22 @@ class StackedDoughnutChart:
         n = len(list(self.data_values.values())[0])
         assert(len(self.data_labels) == n)
         m = len(self.data_values)
-        colors_needed = m + n - (len(self.colors) + len(self.summary_colors))
+        # note: removed option to generate palette automatically; assume user specifies suitable colors instead
+        # colors_needed = m + n - (len(self.colors) + len(self.summary_colors))
         # if the user hasn't provided colors, choose them from an appropriate palette now
-        if colors_needed > 0:
-            colors = make_color_pal(colors_needed)
-            if len(self.colors) == 0:
-                self.colors = colors[slice(n)]
-            if len(self.summary_colors) == 0:
-                self.summary_colors = colors[slice(colors_needed - m, colors_needed)]
+        # if colors_needed > 0:
+        #     colors = make_color_pal(colors_needed)
+        #     if len(self.colors) == 0:
+        #         self.colors = colors[slice(n)]
+        #     if len(self.summary_colors) == 0:
+        #         self.summary_colors = colors[slice(colors_needed - m, colors_needed)]
 
         # the colors associated with the summary categories as border color here,
         # to enforce the visual appearance of arcs being grouped by summary categories
         ds = {'label': '',
               'data': sum(self.data_values.values(), []),  # concat data values from all summary cats into one big list
               'backgroundColor': self.colors,
-              'borderWidth': 5,
+              'borderWidth': self.border_width,
               'borderColor': sum(([c]*n for c in self.summary_colors), []),  # replicate each summary color n times
               'catLabels': self.data_labels * n, }
 

@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from json import dumps
-from .color_mngmnt import make_color_pal
+#from .color_mngmnt import make_color_pal
 from .helpers import unique_id
 
 # input data generator for the doughnut chart widget
@@ -20,11 +20,6 @@ class DoughnutChart:
 
     colors -- the colors to use for the categories;
               colors will be drawn from the default palette if none are provided
-
-    color_pal -- the name of the color palette to use;
-                 defaults to the default palette defined in color_mngmnt.py
-                 note that color_pal is ignored if colors are specified directly
-                 in via colors
 
     center_text -- text to appear in the center of the chart
                    center_text should be a list, with each entry corresponding to a line of text;
@@ -54,7 +49,7 @@ class DoughnutChart:
     data_values: list
     chart_label: str = ''
     colors: list = field(default_factory=lambda: [])
-    color_pal: str = ''
+    # color_pal: str = ''
     center_text: list = field(default_factory=lambda: [])
     responsive: bool = False
     legend: bool = False
@@ -100,10 +95,11 @@ class DoughnutChart:
         assert(len(self.data_labels) == n)
         # if the user hasn't set colors, choose them from an appropriate palette now
         # otherwise ensure that the user has provided a long-enough list of colors
-        if len(self.colors) == 0:
-            self.colors = make_color_pal(n)
-        else:
-            assert(len(self.colors) >= n)
+        # if len(self.colors) == 0:
+        #     self.colors = make_color_pal(n)
+        # else:
+        # Note: removed option for auto-generating suitable color palette - force user to specify instead
+        assert(len(self.colors) >= n)
         chartdata = {'labels': self.data_labels,
                      'datasets': [{'label': self.chart_label,
                                    'data': self.data_values,
