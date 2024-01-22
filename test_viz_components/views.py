@@ -74,6 +74,8 @@ def proj_progress():
 def simple_overflow_case():
     return ProgressBar(value=110, goal=100, summary_template='{self.value}/{self.goal} done')
 
+def simple_zero_goal_case():
+    return ProgressBar(value=1, goal=0, summary_template='{self.value}/{self.goal} done')
 
 def overflow_case1():
     return Progress(ProgressBar(value=101,
@@ -101,6 +103,18 @@ def overflow_case2():
                     goal=200,
                     summary_template='', )
 
+def zero_goal_case():
+    return Progress(ProgressBar(value=101,
+                                css_class='viz-component-bg-red',
+                                summary_template='bar1: {self.value}/{self.goal} done'),
+                    ProgressBar(value=250,
+                                css_class='viz-component-bg-green',
+                                summary_template='bar2: {self.value}/{self.goal} done'),
+                    ProgressBar(value=0,
+                                css_class='viz-component-bg-yellow',
+                                summary_template='bar3: {self.value}/{self.goal} done'),
+                    goal=0,
+                    summary_template='', )
 
 progress_bar_examples = dict(
     risks_progress=risks(),
@@ -108,8 +122,11 @@ progress_bar_examples = dict(
     patrol_progress=patrol_progress(),
     proj_progress=proj_progress(),
     simple_overflow=simple_overflow_case(),
+    simple_zero_goal = simple_zero_goal_case(),
     overflow_case1=overflow_case1(),
-    overflow_case2=overflow_case2())
+    overflow_case2=overflow_case2(),
+    zero_goal = zero_goal_case(),
+    )
 
 
 def progress_view(request):
@@ -121,7 +138,7 @@ def progress_view(request):
 doughnut_data_1 = DoughnutChart(chart_label='Sites',
                                 data_labels=['corrective', 'ROW', 'ET'],
                                 data_values=[50, 200, 170],
-                                # colors = ['red', 'green', 'blue'],
+                                colors = ['red', 'green', 'blue'],
                                 center_text=['420',
                                              {'text': 'Sites', 'color': 'red'},
                                              'Total'],
@@ -131,7 +148,7 @@ doughnut_data_2 = DoughnutChart(chart_label='Treatment Type',
                                 data_labels=['corrective', 'ROW', 'ET'],
                                 data_values=[50, 200, 170],
                                 responsive=True,
-                                # colors = ['red', 'green', 'blue'],
+                                colors = ['red', 'green', 'blue'],
                                 )
 
 doughnut_chart_examples = dict(doughnut_data_1=doughnut_data_1, doughnut_data_2=doughnut_data_2,)
