@@ -1,5 +1,8 @@
 from django import template
+from django.template.loader import render_to_string
+
 from viz_components.progress import Progress
+from viz_components import DoughnutChart, StackedDoughnutChart
 
 register = template.Library()
 
@@ -22,6 +25,16 @@ def stacked_doughnut_chart(canvas_id, chartdata, chartopts):
     See stacked_doughnut_chart.py for details
     """
     return dict(canvas=canvas_id, chartdata=chartdata, chartopts=chartopts)
+
+
+@register.simple_tag
+def render_doughnut_chart(chart):
+    """ Render the doughnut chart based using the appropriate tag for its type """
+    tag = 'stacked_doughnut_chart' if isinstance(chart, StackedDoughnutChart) else 'doughnut_chart'
+    tmpl = template.Template(
+        f'{{% load viz_component_tags %}}{{% {tag} chart.canvas_id chart.chartdata chart.chartopts %}}'
+    )
+    return tmpl.render(template.Context(dict(chart=chart)))
 
 
 @register.inclusion_tag('viz_components/bar_chart.html')
