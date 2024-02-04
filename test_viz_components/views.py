@@ -116,6 +116,19 @@ def zero_goal_case():
                     goal=0,
                     summary_template='', )
 
+def zero_everything_case():
+    return Progress(ProgressBar(value=0,
+                                css_class='viz-component-bg-red',
+                                summary_template='bar1: {self.value}/{self.goal} done'),
+                    ProgressBar(value=0,
+                                css_class='viz-component-bg-green',
+                                summary_template='bar2: {self.value}/{self.goal} done'),
+                    ProgressBar(value=0,
+                                css_class='viz-component-bg-yellow',
+                                summary_template='bar3: {self.value}/{self.goal} done'),
+                    goal=0,
+                    summary_template='', )
+
 progress_bar_examples = dict(
     risks_progress=risks(),
     completed=completed(),
@@ -126,6 +139,7 @@ progress_bar_examples = dict(
     overflow_case1=overflow_case1(),
     overflow_case2=overflow_case2(),
     zero_goal = zero_goal_case(),
+    zero_everything = zero_everything_case(),
     )
 
 

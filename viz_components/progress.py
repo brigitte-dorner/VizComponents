@@ -109,8 +109,8 @@ class Progress(list):
         for b in bars:
             b.goal = b.goal if b.goal else self.goal  # set goal from total if not supplied
             # set the width scalar on the individual bars so the total adds up to 100 if all goals are met
-            b.bar_scaling = b.goal / self.barsize
-            if b.goal == 0 and b.value > 0:  # again, we do want to show a piece of bar when value>0, even if the goal was 0
+            b.bar_scaling = 0
+            if self.barsize > 0:
                 b.bar_scaling = b.value / self.barsize
 
         self.show_summary = show_summary
