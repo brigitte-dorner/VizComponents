@@ -106,8 +106,19 @@ class Progress(list):
         self.goal = goal if self.shared_goal else sum(bar.goal for bar in bars)
         self.value = sum(bar.value for bar in bars)
         for b in bars:
-            if self.shared_goal:  # propagate shared goal to individual bars
-                b.goal = self.goal
+            if self.shared_goal:
+                b.goal = self.goal  # propagate shared goal to individual bars
+                if self.value == 0: b.bar_scaling = 0  # special case - all values are zero, no bars to be shown
+                elif self.goal == 0: b.bar_scaling = b.value/self.value  # special case - only working with values, since there are no goals; bars will self-scale to 100 in this case
+                elif self.value > self.goal:
+                    # restrict the bar to a maximum width by scaling, since there would be an overflow otherwise
+                    b.bar_scaling = self.goal/self.value
+                    # conceptually, scaling by self.goal/self.value should do the trick here
+                    # however, once individual bars exceed 100% of the shared goal this doesn't work any more,
+                    # since the individual bar at that point caps its width at 100
+                    # hence need to tweak the scaling to give the bar the full size
+                    if b.value > self.goal and self.goal > 0:
+                        b.bar_scaling = b.bar_scaling * b.value/self.goal
             else:             # set the width scalar on the individual bars so the total adds up to 100 if all goals are met
                 # workaround for case when the goal is 0
                 # we still want to show a bar in this case if there are values > 0,
