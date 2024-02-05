@@ -19,7 +19,7 @@ def risks():
 
 
 def heli_progress():
-    return ProgressBar(value=320,
+    return ProgressBar(value=250,
                        goal=500,
                        title_template='{self.value} of {self.goal} heli patrols',
                        summary_template='{self.value}/{self.goal} heli',
@@ -27,7 +27,7 @@ def heli_progress():
 
 
 def ground_progress():
-    return ProgressBar(value=52,
+    return ProgressBar(value=150,
                        goal=300,
                        title_template='{self.value} of {self.goal} ground patrols',
                        summary_template='{self.value}/{self.goal} ground',
@@ -129,6 +129,18 @@ def zero_everything_case():
                     goal=0,
                     summary_template='', )
 
+
+def grnd_heli_progress():
+    return Progress(ProgressBar(value=1,
+                                css_class='viz-component-bg-red',
+                                summary_template='bar1: {self.value} patrols planned'),
+                    ProgressBar(value=1,
+                                css_class='viz-component-bg-green',
+                                summary_template='bar2: {self.value} patrols planned'),
+                    goal=2,
+                    summary_template='',
+                    )
+
 progress_bar_examples = dict(
     risks_progress=risks(),
     completed=completed(),
@@ -140,7 +152,8 @@ progress_bar_examples = dict(
     overflow_case2=overflow_case2(),
     zero_goal = zero_goal_case(),
     zero_everything = zero_everything_case(),
-    )
+    grnd_heli=grnd_heli_progress(),
+)
 
 
 def progress_view(request):

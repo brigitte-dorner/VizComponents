@@ -76,6 +76,7 @@ class ProgressBar:
         return self.bar_scaling * b_width
 
 
+
 class Progress(list):
     """ A progress bar, potentially stacked
 
@@ -88,9 +89,10 @@ class Progress(list):
     summary_concat -- string used to concatenate summary texts
     """
 
+
     def __init__(self,
                  *bars: ProgressBar,
-                 goal: Union[int, float] = 0,
+                 goal: Union[int, float] = None,
                  summary_template: str = '{self.value}/{self.goal}',  # show below bar if show_summary is set
                  show_summary: bool = True,
                  summary_concat=', '
@@ -98,23 +100,24 @@ class Progress(list):
         super().__init__(bars)
         # goal should be passed as parameter in situations where all bars are populated from the same pool
         # (e.g., bars represent a series of stages the items in the pool progress through)
+        self.shared_goal = not goal is None
         # if the bars are populated from separate pools, the total width of the progress bar needs to be calculated here
         # as the sum of the goals for the individual bars
-        self.goal = goal or sum(bar.goal for bar in bars)
+        self.goal = goal if self.shared_goal else sum(bar.goal for bar in bars)
         self.value = sum(bar.value for bar in bars)
-        # workaround for case when the goal is 0
-        # we still want to show a bar in this case if there are values > 0,
-        # but we don't want to change the overall goal, since that's used in other places
-        self.barsize = self.goal if self.goal > 0 else self.value
         for b in bars:
-            b.goal = b.goal if b.goal else self.goal  # set goal from total if not supplied
-            # set the width scalar on the individual bars so the total adds up to 100 if all goals are met
-            b.bar_scaling = 0
-            if self.barsize > 0:
-                b.bar_scaling = b.value / self.barsize
+            if self.shared_goal:  # propagate shared goal to individual bars
+                b.goal = self.goal
+            else:             # set the width scalar on the individual bars so the total adds up to 100 if all goals are met
+                # workaround for case when the goal is 0
+                # we still want to show a bar in this case if there are values > 0,
+                self.barsize = self.goal if self.goal > 0 else self.value
+                if self.barsize > 0:
+                    b.bar_scaling = b.goal / self.barsize
 
         self.show_summary = show_summary
         if show_summary:
             b_summary = summary_concat.join(b.summary for b in bars if (b.show_summary and len(b.summary) > 0))
             p_summary = summary_template.format(self=self)
             self.summary = summary_concat.join((b_summary, p_summary)) if ((len(b_summary) > 0) and (len(p_summary) > 0)) else b_summary if (len(b_summary) > 0) else p_summary
+
